@@ -1,26 +1,30 @@
 var kayApe = "AIzaSyDBYVgCATp-oO7PCaJLvg6wZyl3gmTDwz4";
 
 //This variable is for requesting to the API
-var videoID='';
-var videoIdArr='';
+var videoID = '';
+var videoIdArr = '';
 
-//initialise editors
+//initialise the input output editors
 setupInputEditor();
 setupOutputEditor();
 
+//Pre-request api to speed up the generating process
+setTimeout(function() {
+  loadClient();
+}, 100);
 
 // This function gets urls from the input editor
-function getUrls(){
-  var urls=[];
+function getUrls() {
+  var urls = [];
 
   //Get all lines from the input editor
   var lines = inputEditor.session.doc.getAllLines();
 
-  var counter=0;
-  for(var c=0;c<lines.length;c++){
+  var counter = 0;
+  for (var c = 0; c < lines.length; c++) {
     //if line not empty, assign to urls array
-    if(lines[c]){
-      urls[counter]=lines[c];
+    if (lines[c]) {
+      urls[counter] = lines[c];
       counter++;
     }
   }
@@ -28,8 +32,8 @@ function getUrls(){
   videoIdArr = Array(urls.length);
 
   for (var i = 0; i < urls.length; i++) {
-      videoID = videoID + ',' + youtube_parser(urls[i]);
-      videoIdArr[i] = youtube_parser(urls[i]);
+    videoID = videoID + ',' + youtube_parser(urls[i]);
+    videoIdArr[i] = youtube_parser(urls[i]);
   }
 }
 
@@ -52,123 +56,147 @@ function execute() {
     })
     .then(function(response) {
 
-      //Clear output editor
-      outputEditor.setValue("");
+        //Clear output editor
+        outputEditor.setValue("");
 
         var videoNumber = 0;
 
-        outputEditor.session.insert(0,"<ol>");
-
+        outputEditor.session.insert(0, "<ol>");
+        addEmptyLine();
         for (var i = 0; i < videoIdArr.length; i++) {
           var title = response.result.items[i].snippet.title;
           var duration = convertDuration(response.result.items[i].contentDetails.duration);
-          var li = `<li>Video #${++videoNumber} - ${title} (Duration: ${duration})</li>`;
-          outputEditor.session.insert(i,li);
-      }
-      outputEditor.session.insert(0,"</ol>");
-      outputEditor.session.insert(0,"<p>");
-      for (var k = 0; k < videoIdArr.length; k++) {
-        var iframe = `<iframe width='853' height='480' src='https://www.youtube.com/embed/${videoIdArr[k]}?rel=0;showinfo=0' allow='autoplay; encrypted-media' frameborder='0' allowfullscreen=''></iframe>`;
+          var li = `<li><strong>Video #${++videoNumber} - ${title} (Duration: ${duration})</strong></li>`;
+          outputEditor.session.insert(i, li);
+          addEmptyLine();
+        }
+        outputEditor.session.insert(0, "</ol>");
+        addEmptyLine();
+        outputEditor.session.insert(0, "<p>");
+        for (var k = 0; k < videoIdArr.length; k++) {
 
-        outputEditor.session.insert(k,iframe);
-      }
-      outputEditor.session.insert(0,"</p>");
+          var iframe = `<iframe width='120' height='120' src='https://www.youtube.com/embed/${videoIdArr[k]}?rel=0;showinfo=0' allow='autoplay; encrypted-media' frameborder='0' allowfullscreen=''></iframe>`;
 
+          addEmptyLine();
+          outputEditor.session.insert(k, iframe);
+
+        }
+        addEmptyLine();
+        outputEditor.session.insert(0, "</p>");
 
       },
       function(err) {
         console.error("Execute error", err);
       });
-}
+}//end function
+
 gapi.load("client");
 
 
-async function run() {
-  getUrls();
-  await loadClient();
-  if(inputEditor.session.doc.getLength()>0){
-    //execute();
-    console.log("run");
+//This function is called by the Generate button
+async function generate() {
+  console.log(inputEditor.session.getValue().length);
+  //Only run if the char length if more than 29 chars
+  if (inputEditor.session.getValue().length > 29) {
+    getUrls();
+    execute();
   }
 }
 
-////////////////////////////////////////
-////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
-function setupInputEditor()
-{
+function setupInputEditor() {
   window.inputEditor = ace.edit("input");
-  inputEditor.setTheme("ace/theme/monokai");
+  inputEditor.setTheme("ace/theme/tomorrow_night_eighties");
   inputEditor.getSession().setMode("ace/mode/text");
-  inputEditor.on("input", update);
-  setTimeout(update, 100);
+  inputEditor.on("input", updateInput);
+  setTimeout(updateInput, 100);
 
   inputEditor.focus();
 
   inputEditor.setOptions({
-    fontSize: "11pt",
+    fontSize: "12pt",
     showLineNumbers: true,
     showGutter: true,
-    vScrollBarAlwaysVisible:false,
-    wrap:true
+    vScrollBarAlwaysVisible: false,
+    wrap: true
   });
 
   inputEditor.setShowPrintMargin(false);
   inputEditor.setBehavioursEnabled(false);
 }
 
-function setupOutputEditor()
-{
-  window.outputEditor = ace.edit("output");
-  outputEditor.setTheme("ace/theme/monokai");
-  outputEditor.getSession().setMode("ace/mode/html");
+function updateInput() {
+  var shouldShow = !inputEditor.session.getValue().length;
+  var node = inputEditor.renderer.emptyMessageNode;
+  if (!shouldShow && node) {
+    inputEditor.renderer.scroller.removeChild(inputEditor.renderer.emptyMessageNode);
+    inputEditor.renderer.emptyMessageNode = null;
+  } else if (shouldShow && !node) {
+    node = inputEditor.renderer.emptyMessageNode = document.createElement("div");
+    node.textContent = "One Youtube url on one line and as many as you'd like."
+    node.className = "emptyMessage"
+    inputEditor.renderer.scroller.appendChild(node);
+  }
+}
 
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+function setupOutputEditor() {
+  window.outputEditor = ace.edit("output");
+  outputEditor.setTheme("ace/theme/tomorrow_night_eighties");
+  outputEditor.getSession().setMode("ace/mode/html");
+  outputEditor.on("change", updateOutput);
+  setTimeout(updateOutput, 100);
 
   outputEditor.setOptions({
-    fontSize: "11pt",
+    fontSize: "10.5pt",
     showLineNumbers: true,
     showGutter: true,
-    vScrollBarAlwaysVisible:false,
-    wrap:true
+    vScrollBarAlwaysVisible: false,
+    wrap: true
   });
 
   outputEditor.setShowPrintMargin(false);
   outputEditor.setBehavioursEnabled(false);
 }
 
-function update() {
-    var shouldShow = !inputEditor.session.getValue().length;
-    var node = inputEditor.renderer.emptyMessageNode;
-    if (!shouldShow && node) {
-        inputEditor.renderer.scroller.removeChild(inputEditor.renderer.emptyMessageNode);
-        inputEditor.renderer.emptyMessageNode = null;
-    } else if (shouldShow && !node) {
-        node = inputEditor.renderer.emptyMessageNode = document.createElement("div");
-        node.textContent = "Paste a full Youtube url on each line and as many as you'd like."
-        node.className = "ace_emptyMessage"
-        node.style.padding = "0 10px"
-        node.style.position = "absolute"
-        node.style.zIndex = 9
-        node.style.opacity = 0.5
-        inputEditor.renderer.scroller.appendChild(node);
-    }
+function updateOutput() {
+  var shouldShow = !outputEditor.session.getValue().length;
+  var node = outputEditor.renderer.emptyMessageNode;
+  if (!shouldShow && node) {
+    outputEditor.renderer.scroller.removeChild(outputEditor.renderer.emptyMessageNode);
+    outputEditor.renderer.emptyMessageNode = null;
+  } else if (shouldShow && !node) {
+    node = outputEditor.renderer.emptyMessageNode = document.createElement("div");
+    node.textContent = "Output"
+    node.className = "outputMessage"
+    outputEditor.renderer.scroller.appendChild(node);
   }
+}
 
-function copy(){
- var copyTextarea = document.querySelector('#copiedText');
- copyTextarea.value = outputEditor.getValue();
- copyTextarea.select();
- document.execCommand('copy');
- // Reset textarea
- copyTextarea.value = "";
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+function copyOutput() {
+  var copyTextarea = document.querySelector('#copiedText');
+  copyTextarea.value = outputEditor.getValue();
+  copyTextarea.select();
+  document.execCommand('copy');
+  // Reset textarea
+  copyTextarea.value = "";
 }
 
 
 
-
-
-
-
+//This function adds an empty line to the output editor
+function addEmptyLine(){
+  outputEditor.session.insert({
+      row: outputEditor.session.getLength(),
+        column: 0
+      }, "\n");
+}
 
 
 
