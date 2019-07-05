@@ -5,15 +5,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
   <title>Youtube Video Information Generator</title>
 </head>
 
 <body>
-  <textarea name="name" rows="8" cols="80" id="input"></textarea>
-  <textarea name="name" rows="8" cols="80" id="output"></textarea>
-  <button onclick="run()">Run</button>
+  <div id="container">
+    <div id="input"></div>
+    <div id="buttons">
+      <a name="generate" id="generate" onclick="run()" class="waves-effect red lighten-1 btn-large">Generate</a>
+      <a name="copy" id="copy" onclick="copy()" class="waves-effect cyan darken-1 btn-large" >Copy</a>
+    </div>
+    <div id="output"></div>
+  </div>
+  <!-- This textarea is for the copy function -->
+  <textarea id="copiedText"></textarea>
 </body>
-<script src="script.js"></script>
+
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.5/ace.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
+<script src="script.js"></script>
 
 </html>
