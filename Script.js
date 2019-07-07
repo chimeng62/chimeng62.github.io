@@ -12,15 +12,14 @@ setTimeout(function() {
 
 //This function is called by the Generate button
 async function generate() {
-  getUrls();
-  await youtubeRequest();
-  await vimeoRequest();
   //Only run if the input is more than 10 chars
   if (inputEditor.session.getValue().length > 10) {
+    getUrls();
+    await youtubeRequest();
+    await vimeoRequest();
     printOutput();
   }
 }
-
 
 function printOutput() {
   printTitle();
