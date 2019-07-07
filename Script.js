@@ -1,45 +1,130 @@
-var kayApe = "AIzaSyDBYVgCATp-oO7PCaJLvg6wZyl3gmTDwz4";
-
 //This variable is for requesting to the API
-var videoID = '';
-var videoIdArr = '';
+var kayApe = "AIzaSyDBYVgCATp-oO7PCaJLvg6wZyl3gmTDwz4";
 
 //initialise the input output editors
 setupInputEditor();
 setupOutputEditor();
 
-//Pre-request api to speed up the generating process
+//Pre-connect to Youtube api to speed up the generating process
 setTimeout(function() {
-  loadClient();
-}, 100);
+  loadYoutubeClient();
+}, 500);
 
-// This function gets urls from the input editor
-function getUrls() {
-  var urls = [];
-
-  //Get all lines from the input editor
-  var lines = inputEditor.session.doc.getAllLines();
-
-  var counter = 0;
-  for (var c = 0; c < lines.length; c++) {
-    //if line not empty, assign to urls array
-    if (lines[c]) {
-      urls[counter] = lines[c];
-      counter++;
-    }
-  }
-
-  videoIdArr = Array(urls.length);
-
-  for (var i = 0; i < urls.length; i++) {
-    videoID = videoID + ',' + youtube_parser(urls[i]);
-    videoIdArr[i] = youtube_parser(urls[i]);
+//This function is called by the Generate button
+async function generate() {
+  getUrls();
+  await youtubeRequest();
+  await vimeoRequest();
+  //Only run if the input is more than 10 chars
+  if (inputEditor.session.getValue().length > 10) {
+    printOutput();
   }
 }
 
 
+function printOutput() {
+  printTitle();
+  printIframe();
+} //End function
+
+//This function prints out titles of the videos in li
+function printTitle() {
+
+  //Clear output editor
+  outputEditor.setValue("");
+
+  var videoNumber = 0;
+
+  //Add <ol>
+  outputEditor.session.insert(0, "<ol>");
+  addEmptyLine();
+
+  //Get the biggest array
+  var arrSize = getBiggestArr();
+  var vimeo = 0;
+  var youtube = 0;
+  for (var r = 0; r < arrSize; r++) {
+
+    //Print vimeo titles
+    if (vimeoUrlArr[r]) {
+      var title = vimeoResponse[vimeo].title;
+      var duration = convertVimeoDuration(vimeoResponse[vimeo].duration);
+      var li = `  <li><strong>Video #${++videoNumber} - ${title} (Duration: ${duration})</strong></li>`;
+      outputEditor.session.insert(0, li);
+      addEmptyLine();
+      vimeo++;
+    }
+
+    //Print youtube titles
+    if (youtubeVideoIdArr[r]) {
+      var title = youtubeResponse.result.items[youtube].snippet.title;
+      var duration = convertYoutubeDuration(youtubeResponse.result.items[youtube].contentDetails.duration);
+      var li = `  <li><strong>Video #${++videoNumber} - ${title} (Duration: ${duration})</strong></li>`;
+      outputEditor.session.insert(0, li);
+      addEmptyLine();
+      youtube++;
+    }
+  }
+
+  //Add </ol>
+  outputEditor.session.insert(0, "</ol>");
+  addEmptyLine();
+} //end function
+
+
+function printIframe() {
+  outputEditor.session.insert(0, "<p>");
+  //Get the biggest array
+  var arrSize = getBiggestArr();
+  var vimeo = 0;
+  var youtube = 0;
+  for (var r = 0; r < arrSize; r++) {
+    addEmptyLine();
+    //Print vimeo titles
+    if (vimeoUrlArr[r]) {
+      var videoId = vimeoResponse[vimeo].video_id;
+      var iframe = `  <iframe width="120" height="120" src="https://player.vimeo.com/video/${videoId}?color=ffffff&amp;title=0&amp;byline=0&amp;portrait=0" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>`;
+      outputEditor.session.insert(r, iframe);
+      addEmptyLine();
+      vimeo++;
+    }
+
+    //Print youtube titles
+    if (youtubeVideoIdArr[r]) {
+      var iframe = `  <iframe width='120' height='120' src='https://www.youtube.com/embed/${youtubeVideoIdArr[r]}?rel=0;showinfo=0' allow='autoplay; encrypted-media' frameborder='0' allowfullscreen=''></iframe>`;
+      outputEditor.session.insert(0, iframe);
+      addEmptyLine();
+      youtube++;
+    }
+  }
+  outputEditor.session.insert(0, "</p>");
+}
+
+
+
+//Find the biggest array between vimeoUrlArr and youtubeVideoArr
+function getBiggestArr() {
+  var arrSize = 0;
+  if (vimeoUrlArr.length > youtubeVideoIdArr.length) {
+    arrSize = vimeoUrlArr.length;
+  } else if (vimeoUrlArr.length < youtubeVideoIdArr.length) {
+    arrSize = youtubeVideoIdArr.length;
+  } else {
+    arrSize = vimeoUrlArr.length;
+  }
+  return arrSize;
+}
+
+//Variable for storing just the video id not the entire youtube url
+//Youtube API only accept video ids not the full url
+var youtubeVideoIdArr = [];
+var youtubeVideoID = "";
+
+//Vimeo accepts OEMBED so full url is accepted and no api key is needed
+var vimeoUrlArr = [];
+
 //This function loads the API using the api key
-function loadClient() {
+function loadYoutubeClient() {
   gapi.client.setApiKey(kayApe);
   return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
     .then(function() {},
@@ -48,60 +133,79 @@ function loadClient() {
       });
 }
 
-// Make sure the client is loaded before calling this method.
-function execute() {
+//This function takes in a full Vimeo url
+function vimeoFetch(url) {
+  return fetch('https://vimeo.com/api/oembed.json?url=' + url) // return this promise
+    .then((resp) => resp.json());
+}
+
+//These variable are for
+var youtubeResponse = [];
+var vimeoResponse = [];
+
+//Send request to Vimeo
+async function vimeoRequest() {
+  var counter = 0;
+
+  for (var o = 0; o < vimeoUrlArr.length; o++) {
+    if (vimeoUrlArr[o]) {
+
+      await vimeoFetch(vimeoUrlArr[o])
+        .then(function(data) {
+          vimeoResponse[counter] = data;
+          counter++;
+        });
+    }
+  } //end for loop
+} //end function
+
+
+// Sends request to Youtube
+function youtubeRequest() {
   return gapi.client.youtube.videos.list({
       "part": "snippet,contentDetails",
-      "id": videoID
+      "id": youtubeVideoID
     })
     .then(function(response) {
-
-        //Clear output editor
-        outputEditor.setValue("");
-
-        var videoNumber = 0;
-
-        outputEditor.session.insert(0, "<ol>");
-        addEmptyLine();
-        for (var i = 0; i < videoIdArr.length; i++) {
-          var title = response.result.items[i].snippet.title;
-          var duration = convertDuration(response.result.items[i].contentDetails.duration);
-          var li = `<li><strong>Video #${++videoNumber} - ${title} (Duration: ${duration})</strong></li>`;
-          outputEditor.session.insert(i, li);
-          addEmptyLine();
-        }
-        outputEditor.session.insert(0, "</ol>");
-        addEmptyLine();
-        outputEditor.session.insert(0, "<p>");
-        for (var k = 0; k < videoIdArr.length; k++) {
-
-          var iframe = `<iframe width='120' height='120' src='https://www.youtube.com/embed/${videoIdArr[k]}?rel=0;showinfo=0' allow='autoplay; encrypted-media' frameborder='0' allowfullscreen=''></iframe>`;
-
-          addEmptyLine();
-          outputEditor.session.insert(k, iframe);
-
-        }
-        addEmptyLine();
-        outputEditor.session.insert(0, "</p>");
-
+        youtubeResponse = response;
       },
       function(err) {
         console.error("Execute error", err);
       });
-}//end function
+} //end function
 
 gapi.load("client");
 
 
-//This function is called by the Generate button
-async function generate() {
-  console.log(inputEditor.session.getValue().length);
-  //Only run if the char length if more than 29 chars
-  if (inputEditor.session.getValue().length > 29) {
-    getUrls();
-    execute();
-  }
-}
+// This function gets urls from the input editor
+function getUrls() {
+  //Reset arrays
+  vimeoUrlArr = [];
+  youtubeVideoIdArr = [];
+  youtubeVideoID = "";
+  //REGEXs used to filter urls
+  var vimeoRegex = /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/g;
+  var youtubeRegex = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/gm;
+
+  //Get all lines from the input editor
+  var urls = inputEditor.session.doc.getAllLines();
+  var urlCounter = 0;
+  for (var i = 0; i < urls.length; i++) {
+    //if youtube url, parse it to get just the video id and add it to youtubeVideoIdArr array
+
+    if (urls[i].match(youtubeRegex)) {
+      youtubeVideoID = youtubeVideoID + ',' + youtube_parser(urls[i]);
+      youtubeVideoIdArr[urlCounter] = youtube_parser(urls[i]);
+      urlCounter++;
+    }
+
+    //if vimeo url, add the full url to vimeoUrlArr array
+    if (urls[i].match(vimeoRegex)) {
+      vimeoUrlArr[urlCounter] = urls[i];
+      urlCounter++;
+    }
+  } //end for loop
+} //end function
 
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
@@ -135,7 +239,7 @@ function updateInput() {
     inputEditor.renderer.emptyMessageNode = null;
   } else if (shouldShow && !node) {
     node = inputEditor.renderer.emptyMessageNode = document.createElement("div");
-    node.textContent = "One Youtube url on one line and as many as you'd like."
+    node.textContent = "One Youtube/Vimeo link on one line."
     node.className = "emptyMessage"
     inputEditor.renderer.scroller.appendChild(node);
   }
@@ -176,29 +280,79 @@ function updateOutput() {
   }
 }
 
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
+
 function copyOutput() {
-  var copyTextarea = document.querySelector('#copiedText');
-  copyTextarea.value = outputEditor.getValue();
-  copyTextarea.select();
-  document.execCommand('copy');
-  // Reset textarea
-  copyTextarea.value = "";
+  if (outputEditor.session.getValue().length > 0) {
+    var copyTextarea = document.querySelector('#copiedText');
+    copyTextarea.value = outputEditor.getValue();
+    copyTextarea.select();
+    document.execCommand('copy');
+
+    // Reset textarea
+    copyTextarea.value = "";
+
+    //Add flashStart class to overlay div to create a flash effect when copyOutput is called
+    document.querySelector(".copyAlert").classList.add("flash");
+    setTimeout(function() {
+        document.querySelector(".copyAlert").classList.remove("flash");
+    }, 500);
+   }
 }
+
+//Create an overlay over outputEditor
+copyAlertOverlay();
+
+function copyAlertOverlay() {
+  var node = document.createElement("div");
+  node.className = "copyAlert"
+  document.querySelector("#output .ace_scroller .ace_content").appendChild(node);
+}
+
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 
 
 //This function adds an empty line to the output editor
-function addEmptyLine(){
+function addEmptyLine() {
   outputEditor.session.insert({
-      row: outputEditor.session.getLength(),
-        column: 0
-      }, "\n");
+    row: outputEditor.session.getLength(),
+    column: 0
+  }, "\n");
 }
 
+//This function converts seconds to HH:MM::SS format
+function convertVimeoDuration(Seconds) {
+  var hours = Math.floor(Seconds / 3600);
+  var minutes = Math.floor((Seconds - (hours * 3600)) / 60);
+  var seconds = Seconds - (hours * 3600) - (minutes * 60);
 
+  // round seconds
+  seconds = Math.round(seconds * 100) / 100;
+  var result = "";
+
+  if (hours > 0) {
+    result += (hours < 10 ? +hours : hours);
+    result += ":";
+  }
+  if (minutes > 0) {
+    result += (minutes < 10 ? "0" + minutes : minutes);
+  } else if (minutes < 1) {
+    result += "0";
+  }
+  result += ":";
+  result += (seconds < 10 ? "0" + seconds : seconds);
+  return result;
+}
 
 //This function extracts video id from youtube url
 function youtube_parser(url) {
@@ -208,7 +362,7 @@ function youtube_parser(url) {
 }
 
 //This function converts ISO 8601 duration to HH:MM:SS format
-function convertDuration(t) {
+function convertYoutubeDuration(t) {
   //dividing period from time
   var x = t.split('T'),
     duration = '',
