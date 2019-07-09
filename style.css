@@ -82,7 +82,7 @@ textarea {
     margin-top: 180px;
   }
 
-  #copy, #generate{
+  #copy, #run{
     width:95%;
     height: 14%;
     border-radius: 5px;
@@ -99,18 +99,18 @@ textarea {
     background-color: #FF355E;
   }
 
-  #generate{
+  #run{
     background-color: #42BCF2;
   }
 
-  #generate:hover{
+  #run:hover{
     background-color: #00ABF6;
   }
 
  }/*@media*/
  @media only screen and (min-width: 900px) {
 
-   #copy, #generate{
+   #copy, #run{
      font-size: 1.5em;
      color: #FFF;
    }
