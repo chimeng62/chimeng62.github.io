@@ -6,9 +6,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="style.css">
-  <title>Youtube Title Generator</title>
+  <title>CORTEX Video Template Generator</title>
 </head>
 
 <body>
@@ -16,9 +17,27 @@
   <div id="container">
     <div id="input"></div>
 
-    <div id="buttons">
-      <button type="button" name="generate" id="run" >Run</button>
-      <button type="button" name="copy" id="copy">Copy</button>
+    <!-- Contains buttons, counters, and dev details -->
+    <div id="control">
+      <!-- Counter -->
+      <div id="urlCounterContainer">
+        <p id="youtubeCounter" class="fa fa-youtube-play"></p>
+        <p id="vimeoCounter" class="fa fa-vimeo"></p>
+      </div>
+
+      <!-- Buttons -->
+      <button type="button" name="generate" id="run"><span class="fa fa-flask"></span></button>
+      <button type="button" name="copy" id="copy"><span class="fa fa-clone"></span></button>
+
+      <!-- Dev details -->
+      <div id="devDetails">
+        <p>Inspired by the DFT migration team.</p>
+        <p>Developed by:</p>
+        <p id="name">Chimeng Chhay</p>
+        <p id="email"><a href="mailto:chimeng62@gmail.com"><i class="fa fa-envelope"></i></a></p>
+      </div>
+
+
     </div>
 
     <div id="output"></div>

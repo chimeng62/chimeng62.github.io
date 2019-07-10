@@ -1,10 +1,30 @@
 https://www.youtube.com/watch?v=DqXD8cDSA7w&list=RDmTNmjFqNfcc&index=7
 
-
 https://vimeo.com/344865785
-
 
 https://vimeo.com/307787245
 
-
 https://www.youtube.com/watch?v=eIT1goLEv48&list=RDmTNmjFqNfcc&index=8
+
+
+
+<h5>Concept Pods 1-3</h5>
+<ol>
+<li><strong>Video #1 Title (Duration: 3:50)</strong></li>
+<li><strong>Video #2 Title (Duration: 6:35)</strong></li>
+<li><strong>Video #3 Title (Duration: 2:27)</strong></li>
+</ol>
+<ul>
+<li>In these concept pods, you will learn about _______ and theory behind _______, etc.</li>
+<li>Please watch the concept pods by paying a special attention to _______.</li>
+<li>What are the ethical implications for _______ discussed in the <span><span>dialogue</span></span> between _______ ?</li>
+</ul>
+<h5>Concept Pods - Video #4 Title (Duration: 5:16)</h5>
+<ul>
+<li>In this concept pod, you will discover the importance of philosophical _______ and development of _______ within a _______ context.</li>
+<li>Record your observations of _______ and contrast against _______.</li>
+<li>Prepare a 300 word response on the _______ perspective on _______ and how this relates to _______.</li>
+<li>How will these _______ impact _______ on future directions of _______?</li>
+</ul>
+<p><iframe width="640" height="360" src="https://player.vimeo.com/video/137547531?color=FFFFFF&amp;title=0&amp;byline=0&amp;portrait=0" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe></p>
+<p><iframe width="560" height="315" src="https://www.youtube.com/embed/S12-bN1QA1I?rel=0&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe> <iframe width="560" height="315" src="https://www.youtube.com/embed/vsIMkxitT2k?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></p>
