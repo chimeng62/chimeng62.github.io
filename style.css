@@ -41,11 +41,83 @@ textarea {
   }
 }
 
+/* Add color pop to url counters when change */
+.youtubeCounterFlash {
+  animation-name: youtubeCounterFlash;
+  animation-duration: 500ms;
+}
+
+@keyframes youtubeCounterFlash {
+  0% {
+    color: #FFF
+  }
+
+  25% {
+    color: #FF0000
+  }
+
+  50% {
+    color: #FF0000
+  }
+
+  100% {
+    color: #FFF
+  }
+}
+
+.vimeoCounterFlash {
+  animation-name: vimeoCounterFlash;
+  animation-duration: 500ms;
+}
+
+@keyframes vimeoCounterFlash {
+  0% {
+    color: #FFF
+  }
+
+  25% {
+    color: #0088CC
+  }
+
+  50% {
+    color: #0088CC
+  }
+
+  100% {
+    color: #FFF
+  }
+}
+
+#urlCounterContainer p {
+  margin: 0;
+  padding: 5px;
+}
+
+/* Add effects on hover */
+#youtubeCounter {
+  transition: color 400ms;
+}
+
+#youtubeCounter:hover {
+  color: #FF0000;
+
+}
+
+#vimeoCounter {
+  transition: color 400ms;
+}
+
+#vimeoCounter:hover {
+  color: #0088CC;
+}
+
+/* End */
 @media only screen and (min-width: 0px) {
   h1 {
     text-align: center;
     margin-top: 25px;
     margin-bottom: -30px;
+    font-size: 1.6em;
   }
 
   #input, #output {
@@ -63,18 +135,23 @@ textarea {
   }
 
   /* editor placeholders */
-  .emptyMessage, .outputMessage {
+  .emptyMessage, .outputMessage1, .outputMessage2  {
     font-size: 1.4em;
     position: absolute;
-    top: 230px;
+    top: 80px;
     padding: 0 10px;
     z-index: 9;
-    opacity: 0.3;
+    opacity: 0.5;
     color: #FFF;
   }
+.outputMessage2{
+  top: 170px;
+}
 
-  .outputMessage {
-    font-size: 2em;
+
+  .outputMessage1,.outputMessage2 {
+    font-size: 1.4em;
+    opacity: 0.8;
   }
 
   /* Button style */
@@ -88,27 +165,28 @@ textarea {
   #copy, #run {
     width: 85%;
     height: 10vh;
-
     border-radius: 5px;
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 1.5em;
     color: #FFF;
   }
 
-  #copy {
-    background-color: #FF5073;
-  }
-
-  #copy:hover {
-    background-color: #FF355E;
-  }
-
   #run {
-    background-color: #42BCF2;
+    background-color: #9B20FF;
+    border-color: #9B20FF;
   }
 
   #run:hover {
-    background-color: #00ABF6;
+    background-color: #8D00FF;
+  }
+
+  #copy {
+    background-color: #FF2067;
+    border-color: #FF2067;
+  }
+
+  #copy:hover {
+    background-color: #FF0051;
   }
 
   /* Counter style */
@@ -120,10 +198,6 @@ textarea {
     background: rgba(34, 34, 34, 0.1)
   }
 
-  #urlCounterContainer p {
-    margin: 0;
-    padding: 5px;
-  }
 
   /* End counter style */
   /* Personal Info style */
@@ -141,9 +215,36 @@ textarea {
     margin-bottom: -14px;
   }
 
+  #credit {
+    margin-top: -12px;
+    color: #ff5c00;
+    font-size: 1.1em;
+  }
+
   #email a {
     color: #ff5c00;
     font-size: 1.2em;
+    transition: color 500ms;
+  }
+
+  #email a:hover {
+    color: #00ff85;
+  }
+
+  /* flip email icon */
+  .fa-envelope {
+    transition-property: transform;
+    transition-duration: 100ms;
+  }
+
+  .fa-envelope:hover {
+    transform: rotateY(-180deg);
+  }
+}
+
+@media only screen and (max-width: 620px) {
+  #devDetails {
+    display: none
   }
 }
 
@@ -157,5 +258,10 @@ textarea {
   #urlCounterContainer {
     font-size: 1.5em;
   }
+
+  h1 {
+    font-size: 2em;
+  }
 }
+
 /*@media*/
