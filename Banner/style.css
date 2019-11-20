@@ -1,0 +1,25 @@
+body {
+    background-color: #222;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    font-family: 'Roboto Slab', serif;
+  }
+#container {
+    margin-left: 5px;
+    margin-top: 3em;
+    width: 99%;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+
+  }
+  .center-button{
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.1em;
+  }
