@@ -34,11 +34,10 @@ textarea {
   0% {
     background-color: #FFF;
     opacity: 0.3;
-
-    100% {
+  }
+  100% {
       background-color: #FFF;
     }
-  }
 }
 
 /* Add color pop to url counters when change */
@@ -169,6 +168,16 @@ textarea {
     margin-bottom: 10px;
     font-size: 1.5em;
     color: #FFF;
+  }
+
+  #open-banner{
+    width: 50%;
+    height: 7vh;
+    border-radius: 5px;
+    margin-top: 50px;
+    background-color: #0088CC;
+    border-color: #0088CC;
+    color: white;
   }
 
   #run {
