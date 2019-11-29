@@ -4,7 +4,7 @@ var endIframe = "&mode=advanced' width='100%' height='116' frameborder='0' seaml
 
 //SCEM
 var SoCDMS = "School%20of%20Computer,%20Data,%20and%20Mathematical%20Sciences";
-var SoEn = "School%20of%20Engineering";
+var SoEN = "School%20of%20Engineering";
 var SoBE = "School%20of%20Built%20Environment";
 var SoSC = "School%20of%20Science";
 
@@ -83,8 +83,8 @@ function textToClipboard(schoolName) {
             school = SoCDMS;
             break;
 
-        case "SoEn":
-            school = SoEn;
+        case "SoEN":
+            school = SoEN;
             break;
 
         case "SoBE":
